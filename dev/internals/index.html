@@ -70,7 +70,7 @@ CodeInfo(
 └──      return %2</code></pre><p>We convert the code to SSA form using Julia&#39;s built-in IR data structure, after which it looks like this.</p><pre><code class="language-julia">julia&gt; Zygote.@code_ir foo(1)
 1 1 ─ %1 = (Main.bar)(_2)::Any
   │   %2 = (Main.baz)(%1)::Any
-  └──      return %2    </code></pre><p>(There isn&#39;t much difference unless there&#39;s some control flow.)</p><p>The code is then differentiated by the code in <code>compiler/reverse.jl</code>. You can see the output with <code>@code_adjoint</code>.</p><pre><code class="language-julia">julia&gt; Zygote.@code_adjoint foo(1)
+  └──      return %2</code></pre><p>(There isn&#39;t much difference unless there&#39;s some control flow.)</p><p>The code is then differentiated by the code in <code>compiler/reverse.jl</code>. You can see the output with <code>@code_adjoint</code>.</p><pre><code class="language-julia">julia&gt; Zygote.@code_adjoint foo(1)
 1 1 ─ %1  = (Zygote._pullback)(_2, Zygote.unwrap, Main.bar)::Any
   │   %2  = (Base.getindex)(%1, 1)::Any
   │         (Base.getindex)(%1, 2)::Any
@@ -107,7 +107,7 @@ function J(::typeof(foo), x)
   return b, Pullback{typeof(foo)}((da, db))
 end
 
-function(p::Pullback{typeof(foo)})(b̄)
+function (p::Pullback{typeof(foo)})(b̄)
   da, db = p.data[1], p.data[2]
   ā = db(b̄)
   x̄ = da(ā)
@@ -135,4 +135,4 @@ julia&gt; back(1)
 julia&gt; y, back = Zygote._pullback(bad, 1);
 
 julia&gt; back(1) # ok, here&#39;s our issue. Lather, rinse, repeat.
-ERROR: bad</code></pre><p>Of course, our goal is that you never have to do this, but until Zygote is more mature it can be a useful way to narrow down test cases.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../profiling/">« Profiling</a><a class="docs-footer-nextpage" href="../glossary/">Glossary »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Thursday 19 November 2020 21:13">Thursday 19 November 2020</span>. Using Julia version 1.5.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+ERROR: bad</code></pre><p>Of course, our goal is that you never have to do this, but until Zygote is more mature it can be a useful way to narrow down test cases.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../profiling/">« Profiling</a><a class="docs-footer-nextpage" href="../glossary/">Glossary »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Tuesday 13 July 2021 18:45">Tuesday 13 July 2021</span>. Using Julia version 1.6.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
